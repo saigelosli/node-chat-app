@@ -21,6 +21,12 @@ app.use( "/", express.static( publicPath ) );
 io.on( "connection", ( socket ) => {
   console.log( "new user connected" );
 
+  socket.on( "createMessage", ( newMessage ) => {
+    newMessage.createdAt = new Date().getTime();
+    console.log( "createMessage: ", newMessage );
+    socket.emit( "newMessage", newMessage );
+  } );
+
   socket.on( "disconnect", () => {
     console.log( "user disconnected" );
   } );
