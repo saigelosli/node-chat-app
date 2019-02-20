@@ -1,11 +1,14 @@
-const express = require( "express" );
-
 const path = require( "path" );
+const http = require( "http" );
+const express = require( "express" );
+const socketIO = require( "socket.io" );
+
 const publicPath = path.join( __dirname, "/../public" );
+const port = process.env.PORT || 3000;
 
 const app = express();
-
-const port = process.env.PORT || 3000;
+const server = http.createServer( app );
+const io = socketIO( server );
 
 // Assignment:
 // Setup express app
@@ -15,8 +18,14 @@ const port = process.env.PORT || 3000;
 
 app.use( "/", express.static( publicPath ) );
 
-app.listen( port, () => {
-  console.log( `Started on port ${port}` );
+io.on( "connection", ( socket ) => {
+  console.log( "new user connected" );
+
+  socket.on( "disconnect", () => {
+    console.log( "user disconnected" );
+  } );
 } );
 
-module.exports = { app };
+server.listen( port, () => {
+  console.log( `Started on port ${port}` );
+} );
