@@ -31,14 +31,35 @@ io.on( "connection", ( socket ) => {
   //   console.log( "createEmail", newEmail );
   // } );
 
+
+  // Socket.emit from Admin text should say "Welcome to the chat app"
+  // also, socket.broadcast.emit from Admin text "New user joined".
+  socket.emit( "newMessage", {
+    from: "Admin",
+    text: "Welome to the chat app!",
+    createdAt: new Date().getTime(),
+  } );
+  socket.broadcast.emit( "newMessage", {
+    from: "Admin",
+    text: "A new user has joined",
+    createdAt: new Date().getTime(),
+  } );
+
   socket.on( "createMessage", ( newMessage ) => {
-    newMessage.createdAt = new Date().getTime();
+
     console.log( "createMessage: ", newMessage );
     io.emit( "newMessage", {
       from: newMessage.from,
       text: newMessage.text,
       createdAt: newMessage.createdAt,
     } );
+
+    // socket.broadcast.emit( "newMessage", {
+    //   from: newMessage.from,
+    //   text: newMessage.text,
+    //   createdAt: new Date().getTime(),
+    // } );
+
   } );
 
   socket.on( "disconnect", () => {
