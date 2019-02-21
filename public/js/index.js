@@ -20,4 +20,27 @@ socket.on( "disconnect", function() {
 
 socket.on( "newMessage", ( newMessage ) => {
   console.log( "new message: ", newMessage );
+  let li = jQuery( "<li></li>" );
+  li.text( `${newMessage.from}: ${newMessage.text}` );
+  jQuery( "#messages" ).append( li );
+} );
+
+// socket.emit( "createMessage", {
+//   from: "Frank",
+//   text: "Hi",
+// }, function( data ) {
+//   console.log( "Got it. ", data );
+// } );
+
+$( "#message-form" ).on( "submit", function( e ) {
+  // Prevent default behavior (form submission)
+  e.preventDefault();
+
+  socket.emit( "createMessage", {
+    from: "User",
+    text: jQuery( '[name=message]' ).val(),
+  }, function() {
+
+  } );
+
 } );
