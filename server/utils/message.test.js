@@ -1,6 +1,6 @@
 const expect = require( "expect" );
 
-const { generateMessage } = require( "./message.js" );
+const { generateMessage, generateLocationMessage } = require( "./message.js" );
 const { app } = require( "./../server.js" );
 
 describe( "generateMessage", () => {
@@ -17,6 +17,26 @@ describe( "generateMessage", () => {
 
     expect( response.from ).toBe( sender );
     expect( response.text ).toBe( message );
+    expect( response.createdAt ).toBeA( "number" );
+
+  } );
+} );
+
+describe( "generateLocationMessage", () => {
+
+  it( "Should generate correct location object", () => {
+    // pass in from, latitude, longitude
+    // assert from is correct
+    // createdAt is a number
+    // latitude and longitude are the correct (although contrived) values
+
+    const sender = "theSender";
+    const latitude = 29.43;
+    const longitude = 43.29;
+    const response = generateLocationMessage( sender, latitude, longitude );
+
+    expect( response.from ).toBe( sender );
+    expect( response.url ).toBe( `https://www.google.com/maps?q=${latitude},${longitude}` );
     expect( response.createdAt ).toBeA( "number" );
 
   } );
