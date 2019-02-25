@@ -17,22 +17,30 @@ function scrollToBottom() {
 };
 
 socket.on( "connect", function() {
+  let params = jQuery.deparam( window.location.search );
+  socket.emit( "join", params, function( error ) {
+    if ( error ) {
+      alert( error );
+      window.location.href = "/";
+    } else {
+      console.log( "No error" );
+    }
+  } );
   console.log( "connected to server" );
-
-  // socket.emit( "createEmail", {
-  //   to: "jen@example.com",
-  //   text: "Hello there"
-  // } );
-
 } );
 
 socket.on( "disconnect", function() {
   console.log( "disconnected from server" );
 } );
 
-// socket.on( "newEmail", function( email ) {
-//   console.log( "new email", email );
-// } );
+socket.on( "updateUserList", function( users ) {
+  var ol = jQuery( "<ol></ol>" );
+  users.forEach( function( user ) {
+    ol.append( jQuery( "<li></li>" ).text( user ) );
+  } );
+
+  jQuery( "#users" ).html( ol );
+} );
 
 socket.on( "newMessage", ( message ) => {
   let formattedTime = moment( message.createdAt ).format( "h:mm a" );
@@ -45,9 +53,6 @@ socket.on( "newMessage", ( message ) => {
 
   jQuery( "#messages" ).append( html );
   scrollToBottom();
-  // let li = jQuery( "<li></li>" );
-  // li.text( `${message.from} ${formattedTime}: ${message.text}` );
-  // jQuery( "#messages" ).append( li );
 } );
 
 socket.on( "newLocationMessage", ( message ) => {
@@ -60,20 +65,7 @@ socket.on( "newLocationMessage", ( message ) => {
   } );
   jQuery( "#messages" ).append( html );
   scrollToBottom();
-  // let li = jQuery( "<li></li>" );
-  // let a = jQuery( `<a target="_blank">My current location</a>` );
-  // li.text( `${message.from} ${formattedTime}: ` );
-  // a.attr( "href", message.url );
-  // li.append( a );
-  // jQuery( "#messages" ).append( li );
 } );
-
-// socket.emit( "createMessage", {
-//   from: "Frank",
-//   text: "Hi",
-// }, function( data ) {
-//   console.log( "Got it. ", data );
-// } );
 
 $( "#message-form" ).on( "submit", function( e ) {
   // Prevent default behavior (form submission)
